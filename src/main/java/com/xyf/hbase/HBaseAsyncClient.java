@@ -16,9 +16,8 @@ import java.util.UUID;
 
 /**
  * AsyncHBase Client
- *
+ * <p/>
  * Source code : https://github.com/hbaseinaction/twitbase-async/blob/master/src/main/java/HBaseIA/TwitBase/AsyncUsersTool.java
- *
  */
 public class HBaseAsyncClient {
 
@@ -28,6 +27,10 @@ public class HBaseAsyncClient {
     static final byte[] NAME_COL = "name".getBytes();
     static final byte[] EMAIL_COL = "email".getBytes();
     static final Boolean BATCH_PUT = true;
+    private static final byte[][] QUALIFIERS = {{'q', 'u', 'a', 'l'},
+            {'f', 'i' ,'e', 'r'}};
+    private static final byte[][] VALUES = {{'v', 'a', 'l', 'u', 'e'},
+            {'v', 'a', 'l', 'u', 'e', 's'}};
 
     public static final String usage =
             "usertool action ...\n" +
@@ -234,16 +237,14 @@ public class HBaseAsyncClient {
             }
         } else if ("insert".equals(args[0])) {
             List<PutRequest> puts = new ArrayList<>();
-            for (int i=0;i<100;i++) {
-                PutRequest put = new PutRequest(TABLE_NAME,("0"+i).getBytes(),INFO_FAM,PASSWORD_COL,"123".getBytes());
-                PutRequest put1 = new PutRequest(TABLE_NAME,("0"+i).getBytes(),INFO_FAM,NAME_COL,"liwei".getBytes());
+            for (int i = 0; i < 100; i++) {
+                PutRequest put = new PutRequest(TABLE_NAME, ("0" + i).getBytes(),INFO_FAM, QUALIFIERS, VALUES);
                 puts.add(put);
-                puts.add(put1);
             }
-            Deferred<ArrayList<Object>> d = Deferred.group(insertList(client,puts));
+            Deferred<ArrayList<Object>> d = Deferred.group(insertList(client, puts));
             try {
                 d.join();
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
